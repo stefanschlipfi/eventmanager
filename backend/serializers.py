@@ -5,3 +5,4 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         exclude = ['id']
+        depth = 1
