@@ -25,7 +25,7 @@ SECRET_KEY = '2nrv@ep-n652ffsj&)y9y@a*ov3kigf4qov+@o%qlv_ch9$i&*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'backend.apps.BackendConfig',
+    'rest_framework',
+    'phone_field',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +51,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'eventmanager.permissions.BaseModelPermission',
+    ]
+}
+
 
 ROOT_URLCONF = 'eventmanager.urls'
 
@@ -75,8 +85,12 @@ WSGI_APPLICATION = 'eventmanager.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'eventmanager',
+        'USER': 'django',
+        'PASSWORD': 'ZELL2001',
+        'HOST': 'localhost',
+        'PORT': '5432'
     }
 }
 
