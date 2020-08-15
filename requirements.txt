@@ -1,0 +1,5 @@
+Django==2.*
+django-rest-framework
+django-phone-field
+IPython
+psycopg2
