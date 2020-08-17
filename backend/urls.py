@@ -20,5 +20,6 @@ from .views import *
 
 router = routers.DefaultRouter()
 router.register(r'event', EventViewSet)
+router.register(r'eventuser', EventUserViewSet)
 
 urlpatterns = router.urls
