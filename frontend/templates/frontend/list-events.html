@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags%}
 {% block content %}
 {% load static %}
 <div id="app">
@@ -23,7 +24,7 @@
                     <div class="card-body-title">
                         <h5 class="card-title">[[event.name]]</h5>
                         <!-- action.options[action.selectedIndex].value -->
-                        <button class="btn btn-outline-primary" v-if="!find_user_event_action(event,{{ user.id }})">{{event_user_form.as_p}}</button>
+                        <button v-if="!find_user_event_action(event,{{ user.id }})" type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#action_modal">Teilnehmen</button>
                         <button class="btn btn-outline-success" v-else><span class="material-icons">done</span>[[find_user_event_action(event,{{ user.id }})]]</button>
                     </div>
                     
@@ -35,6 +36,20 @@
                 </div>
             </div>
             <button v-on:click="event_detail(event)" class="btn btn-primary btn-right">< Back</button>
+
+            <div class="modal fade" id="action_modal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                        {{event_user_form|crispy}}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button v-on:click="update_action(event,{{user.id}}) type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
         
         </div>

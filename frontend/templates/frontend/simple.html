@@ -1,0 +1,15 @@
+{% block content %}
+
+    {% for field_name,action in event_user_form.fields.items %}
+        <p>{{field_name}}</p>
+
+        <select>
+        {% for option in action.choices %}
+            <option value="{{option}}">{{option}}</option>
+        {% endfor %}
+        </select>
+
+    {% endfor %}
+
+    {{event_user_form.as_p }}
+{% endblock content %}

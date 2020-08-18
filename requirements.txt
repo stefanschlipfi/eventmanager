@@ -1,5 +1,6 @@
 Django==2.*
 django-rest-framework
 django-phone-field
+django-crispy-forms
 IPython
 psycopg2

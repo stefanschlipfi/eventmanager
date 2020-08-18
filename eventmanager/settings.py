@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'backend.apps.BackendConfig',
     'frontend.apps.FrontendConfig',
     'rest_framework',
+    'crispy_forms',
     #'phone_field',
 ]
 
@@ -148,3 +149,6 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
 #Media Dir
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
+
+#CRISPY FORMS
+CRISPY_TEMPLATE_PACK= 'bootstrap4'

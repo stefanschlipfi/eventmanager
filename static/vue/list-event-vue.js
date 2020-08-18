@@ -45,6 +45,10 @@ var vueapp = new Vue({
             delete new_events_array
 
         },
+        update_action: function(event,user_id){
+            var action_select = $('#id_action')[0]
+            var action = action_select.options[action_select.selectedIndex].value
+        },
         find_user_event_action: function(event,user_id){
             var return_val = false
             event.members.forEach(member => {
