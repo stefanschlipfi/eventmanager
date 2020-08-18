@@ -22,7 +22,8 @@
                 <div class="card-body">
                     <div class="card-body-title">
                         <h5 class="card-title">[[event.name]]</h5>
-                        <button class="btn btn-outline-primary" v-if="!find_user_event_action(event,{{ user.id }})">Zusagen ?</button>
+                        <!-- action.options[action.selectedIndex].value -->
+                        <button class="btn btn-outline-primary" v-if="!find_user_event_action(event,{{ user.id }})">{{event_user_form.as_p}}</button>
                         <button class="btn btn-outline-success" v-else><span class="material-icons">done</span>[[find_user_event_action(event,{{ user.id }})]]</button>
                     </div>
                     

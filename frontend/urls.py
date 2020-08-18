@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.urls import path
 
-from .views import EventListView
+from .views import EventListView,SimpleView
 
 urlpatterns = [
     path('events/', EventListView.as_view()),
+    path('simple/',SimpleView.as_view())
 ]
