@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load static %}
 <div id="app">
 
     <div class="messages mt-2">
@@ -15,11 +16,28 @@
     -->
     <div v-for="event in events">
 
-        <div v-if="event.detail">
-            <p>Detail view</p>
+        <div v-show="event.detail">
+            <div class="card mb-3" >
+                <img class="card-img-top" v-bind:src="[[event.image]]" alt="Card image cap">
+                <div class="card-body">
+                    <div class="card-body-title">
+                        <h5 class="card-title">[[event.name]]</h5>
+                        <button class="btn btn-outline-primary" v-if="!find_user_event_action(event,{{ user.id }})">Zusagen ?</button>
+                        <button class="btn btn-outline-success" v-else><span class="material-icons">done</span>[[find_user_event_action(event,{{ user.id }})]]</button>
+                    </div>
+                    
+                    <p class="card-text">[[event.descripton]]</p>
+                    <!--<p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+                    <ul class="list-group">
+                        <li class="list-group-item" v-for="member in event.members">user: [[member.user.username]]</li>
+                    </ul>
+                </div>
+            </div>
+            <button v-on:click="event_detail(event)" class="btn btn-primary btn-right">< Back</button>
+
         
         </div>
-        <div v-else>
+        <div v-show="event.card_view">
             <div v-on:click="event_detail(event)" class="card mb-3" >
                 <img class="card-img-top" v-bind:src="[[event.image]]" alt="Card image cap">
                 <div class="card-body">
@@ -30,70 +48,7 @@
             </div>
         </div>
     </div>
-<script>
-
-
-
-    var vueapp = new Vue({
-        delimiters: ['[[', ']]'],
-        el: '#app',
-        data: {
-            events: [],
-            err_messages: [],
-            _before_edit: new Object()
-        },
-        created () {
-            this.api_call('http://localhost:8000/api/event/?format=json','GET')
-            .then(response => {
-                response.data.forEach(item => {
-                    Object.assign(item,{'edit':false});
-                    Object.assign(item,{'detail':false});
-                    this.events.push(item);
-                });
-            })
-        },
-        methods: {
-            event_detail: function(event){
-                console.log(''.concat('event_detail ',event.name))
-                this.invert_detail(event)
-            },
-            invert_detail: function(event){
-                var new_events_array = []
-                this.events.forEach(item => {
-                    //if (item.id == event.id){
-                    //    console.log("set detail to " + !item.detail + ", event_id: " + item.id)
-                    //    item.detail = !item.detail;
-                    //}
-                    item.detail = !item.detail;
-                    new_events_array.push(item)
-                });
-                this.events = new_events_array
-                delete new_events_array
-            },
-            api_call: function(url,method,json_data="{}"){
-                resp = this.async_api_call_axios(url,method,json_data)
-                resp.catch(error => {
-                    this.err_messages.push(error)
-                });
-                resp.finally(() => {
-                    this.loading = false;
-                });
-                return resp
-            },
-            async_api_call_axios: async(url,method,json_data) =>{
-                return await axios({
-                    url: url,
-                    method: method,
-                    data: json_data,
-                    proxy: '',
-                    headers: {'Content-Type':'application/json','X-CSRFToken': Cookies.get('csrftoken')}
-                });
-            }
-        }
-        
-    }); 
-
-</script>
+<script src="{% static 'vue/list-event-vue.js' %}"></script>
 </div>
 
 {% endblock content %}

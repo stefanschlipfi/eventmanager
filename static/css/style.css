@@ -7,6 +7,13 @@
     padding: 2px 2px 0px 2px;
     font-size: 12pt;
 }
+.card-body-title h5, p, button{
+    display: inline-block;
+}
+.card-body-title button{
+    float: right;
+}
+
 .card-img-top{
     object-fit: cover;
     max-height: 200px;
