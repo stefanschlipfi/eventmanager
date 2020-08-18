@@ -8,8 +8,8 @@ __pycache__/
 
 # django migrations
 **/migrations/**
-!**/migrations
 !**/migrations/__init__.py
+!**/migrations
 
 
 # Distribution / packaging
@@ -64,6 +64,7 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
+db.sqlite
 db.sqlite3
 db.sqlite3-journal
 

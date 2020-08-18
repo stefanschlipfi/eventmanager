@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block content %}
+{% csrf_token %}
+    <div id="app">
+        <!--<ul class="list-group" v-for="item in items">
+            <li class="list-group-item mt-1">[[ item.message ]] <button v-on:click="delete_item(item)" class="btn btn-danger btn-del btn-right"><span class="material-icons">delete</span></button></li>
+        </ul>
+        -->
+        <form ref="form" method="POST" class="mb-2" action="{% url 'post-add' %}">
+            <div class="form-group">
+                <label for="title-input">Title</label>
+                <input v-model ="post.title" type="text" class="form-control" id="title-input">
+            </div>
+
+            <div class="form-group">
+              <label for="exampleFormControlTextarea1">Example textarea</label>
+              <textarea v-model.lazy ="post.content" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Email address</label>
+                <input id="email-edit" v-on:input="validEmail(post.email)" v-model.lazy ="post.email" type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+            </div>
+            <button ref='submitbtn' @click.prevent="send_post()" type="submit" class="btn btn-primary btn-right">Post</button>
+        </form>
+
+          <div v-if="post.title !== ''" class="card" style="width: 100%;">
+            <div class="card-body">
+                <h5 class="card-title">[[ post.title]]</h5>
+                <h6 class="card-subtitle mb-2 text-muted">[[ post.email ]]</h6>
+                <p class="card-text">[[ post.content ]]</p>
+                <button type="button" data-toggle="modal" data-target="#editmodal" class="card-btn btn btn-primary ">edit</button>
+                <a v-on:click="delete_item(post)" class="card-btn btn btn-danger">delete</a>
+            </div>
+            </div>
+    </div>
+
+    <script>
+
+
+        var app = new Vue({
+            delimiters: ['[[', ']]'],
+            el: '#app',
+            data: {
+                post:{
+                    title: "",
+                    email: "",
+                    content: ""
+                },
+            },
+            methods: {
+                send_post: function(){
+                    console.log("send post")
+                    form = $(this.$refs.form)   
+                    url = form.attr('action')
+                    console.log(url)
+
+                    var json_data = JSON.stringify(this.post)
+                    this.api_call_axios(url,'POST',json_data)
+                    .then((ans) => console.log(ans))
+                    .catch((error) => console.error(error))
+                },
+                api_call_axios: async(url,method,json_data="{}") => {
+                    return await axios({
+                        url: url,
+                        method: method,
+                        data: json_data,
+                        proxy: '',
+                        headers: {'Content-Type':'application/json','X-CSRFToken': Cookies.get('csrftoken')}
+                    });
+                },
+                validEmail: function (email) {
+                    var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                    var email_html = $('#email-edit')
+                    if (re.test(email)){
+                        email_html.removeClass('is-invalid')
+                        email_html.addClass('is-valid')
+                    }else{
+                        email_html.removeClass('is-valid')
+                        email_html.addClass('is-invalid')                    
+                    }
+                }
+            }
+        });
+    </script>
+
+{% endblock content %}
+

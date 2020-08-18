@@ -4,10 +4,10 @@ from .models import Event,EventUser
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        exclude = ['id']
+        exclude = []
 
 class EventUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventUser
-        exclude = ['id']
+        exclude = []
         depth = 1

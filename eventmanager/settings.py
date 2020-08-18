@@ -38,8 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'backend.apps.BackendConfig',
+    'frontend.apps.FrontendConfig',
     'rest_framework',
-    'phone_field',
+    #'phone_field',
 ]
 
 MIDDLEWARE = [
@@ -53,9 +54,15 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
     'DEFAULT_PERMISSION_CLASSES': [
         'eventmanager.permissions.BaseModelPermission',
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
 
 
@@ -64,7 +71,7 @@ ROOT_URLCONF = 'eventmanager.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS':  [os.path.join(BASE_DIR,'root-templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,13 +91,17 @@ WSGI_APPLICATION = 'eventmanager.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
+    #'default': {
+    #    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #    'NAME': 'eventmanager',
+    #    'USER': 'django',
+    #    'PASSWORD': 'ZELL2001',
+    #    'HOST': 'localhost',
+    #    'PORT': '5432'
+    #}
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'eventmanager',
-        'USER': 'django',
-        'PASSWORD': 'ZELL2001',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'ENGINE' : 'django.db.backends.sqlite3',
+        'NAME' : 'db.sqlite'
     }
 }
 
@@ -132,3 +143,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+
+#Media Dir
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_URL = '/media/'

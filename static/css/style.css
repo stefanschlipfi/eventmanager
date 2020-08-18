@@ -1,0 +1,30 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.btn-del{
+    padding: 2px 2px 0px 2px;
+    font-size: 12pt;
+}
+.card-img-top{
+    object-fit: cover;
+    max-height: 200px;
+    width: 100%;
+}
+
+.btn-right{
+    float: right;
+}
+.card-btn{
+    color:#fff !important;
+}
+.post-edit-group{
+    position: relative;
+    display: inline-block;
+}
+
+.post-edit-item{
+    margin-bottom: 10px !important;
+    width: 100% !important;
+}

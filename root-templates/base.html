@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Eventmanager</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <link rel='stylesheet' type='text/css' media='screen' href='{% static 'bootstrap/bootstrap.css' %}'>
+    <link rel='stylesheet' type='text/css' href='{% static 'css/style.css' %}'>
+  <!--  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+    
+</head>
+<body>
+    
+    <!-- Bootstrap js -->
+    <script src='{% static 'vue/axios.js' %}'> </script>
+    <script src='{% static 'bootstrap/jquery.min.js'%}'></script>
+    <script src='{% static 'bootstrap/bootstrap.min.js' %}'></script>
+    <script src='{% static 'vue/vue.min.js' %}'></script>
+    <script src={% static 'vue/js.cookie.min.js'%}></script>
+
+    <div class="container mt-3">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+    
+    
+</body>
+</html>

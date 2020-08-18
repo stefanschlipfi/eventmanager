@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block content %}
+<div id="app">
+
+    <div class="messages mt-2">
+        	<div v-for="err_msg in err_messages">
+                <div class="alert alert-danger">[[err_msg]]</div>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">id</th>
+            <th scope="col">common_name</th>
+            <th scope="col">serial_number</th>
+            <th scope="col">not after</th>
+          </tr>
+        </thead>
+        <tbody v-for="cert in certs">
+            <tr v-if="!cert.edit" @dblclick="init_edit(cert)">
+                <th scope="row">[[ cert.id ]]</th>
+                <td>[[ cert.common_name ]]</td>
+                <td>[[ cert.serial_number ]]</td>
+                <td> [[ cert.not_after]] </td>
+            </tr>
+            <tr v-else @dblclick="invert_edit(cert)">
+                <th scope="row">[[ cert.id ]]</th>
+                <td><input type="text" v-model="cert.common_name"/></td>
+                <td><input type="text" v-model="cert.serial_number"/></td>
+                <td> [[ cert.not_after]] </td>
+                <td><button @click="update_edit(cert)" class="btn btn-primary">save</button></td>
+                <td><button @click="cancel_edit(cert)" class="btn btn-danger">cancel</button></td>
+            </tr>
+        </tbody>
+      </table> 
+
+<script>
+
+    //var err = new Object()
+    //Object.assign(err,{'message':'TEST'})
+    Vue.component('err-message-component', {
+        data: function () {
+            return {
+            err_messages: ["TEST1","TEST2"],
+            }
+        },
+        template: '<div class="messages mt-2"><div v-for="err_msg in err_messages"><div class="alert alert-danger">Error: [[err_msg]]</div></div></div>'
+    });
+
+    var certsapp = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            certs: [],
+            err_messages: [],
+            _before_edit: new Object()
+        },
+        created () {
+            this.api_call('http://localhost:8000/api/certs/?format=json','GET')
+            .then(response => {
+                response.data.forEach(item => {
+                    Object.assign(item,{'edit':false});
+                    this.certs.push(item);
+                });
+            })
+        },
+        methods: {
+            invert_edit: function(event){
+                var new_certs_array = []
+                this.certs.forEach(item => {
+                    if (item.id == event.id){
+                        console.log("set edit to " + !item.edit + ", event_id: " + item.id)
+                        item.edit = !item.edit;
+                    }
+                    new_certs_array.push(item)
+                });
+                this.certs = new_certs_array
+                delete new_certs_array
+            },
+            init_edit: function(cert){
+                if (this._before_edit == undefined)
+                    this._before_edit = new Object()
+                //Object.assign(this._before_edit,{cert.id:cert})
+                this._before_edit[cert.id] = new Object()
+                Object.assign(this._before_edit[cert.id],cert)
+                this.invert_edit(cert)
+
+            },
+            update_edit: function(event){
+                console.log(''.concat('update id: ',event.id))
+                let update_data = event
+                //delete edit property
+                delete update_data.edit
+                let update_data_json = JSON.stringify(update_data)
+                let url = ''.concat('http://localhost:8000/api/certs/',event.id,'/')
+                this.api_call(url,"PUT",json_data=update_data_json)
+                
+                //working with response
+                .then((resp_data) => {
+                    console.log("updated sucessful")
+                    this.invert_edit(event)
+                    this.invert_edit(event)
+
+                })
+                .catch((resp_data) => {
+                    console.log("url: " + url)
+                    job = JSON.parse(resp_data.request.response)
+                    this.err_messages.push(''.concat("Code: ",job.code," Message: ",job.message))
+                })
+                .finally(() => {
+                    this.loading = false;
+                    //this.invert_edit(event)
+                    });
+            },
+            cancel_edit: function(cert){
+                var new_certs_array = []
+                this.certs.forEach(item => {
+                    if (item.id == cert.id){
+                        console.log("reset event_id: " + item.id)
+                        item = this._before_edit[item.id]
+                        item.edit = false
+                    }
+                    new_certs_array.push(item)
+                });
+                this.certs = new_certs_array
+                delete new_certs_array
+            },
+            api_call: function(url,method,json_data="{}"){
+                resp = this.async_api_call_axios(url,method,json_data)
+                resp.catch(error => {
+                    this.err_messages.push(error)
+                });
+                resp.finally(() => {
+                    this.loading = false;
+                });
+                return resp
+            },
+            async_api_call_axios: async(url,method,json_data) =>{
+                return await axios({
+                    url: url,
+                    method: method,
+                    data: json_data,
+                    proxy: '',
+                    headers: {'Content-Type':'application/json','X-CSRFToken': Cookies.get('csrftoken')}
+                });
+            }
+        }
+    }); 
+
+</script>
+</div>
+
+{% endblock content %}

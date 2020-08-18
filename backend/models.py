@@ -1,9 +1,11 @@
-from django.db import models
+from django.db import models,DataError
 from django.contrib.auth.models import User
 #from phone_field import PhoneField
 
 class Event(models.Model):
     name = models.CharField(max_length=20)
+    image = models.ImageField(default='event-images/default.png', upload_to='event-images')
+    descripton = models.TextField(null=True,blank=True)
     #members = models.ManyToManyField(EventUser)
 
     def get_members(self):
@@ -25,8 +27,11 @@ class EventUser(models.Model):
     def __str__(self):
         return f'{self.user.username} {self.action} {self.event.name}'
 
-
-  
+    def save(self,*args,**kwargs):
+        all_user_objects = EventUser.objects.filter(user=self.user)
+        if len(all_user_objects.filter(event = self.event)) > 0:
+            raise DataError("EventUser: {} allready exists in event: {}".format(self.user.username,self.event.name))
+        super().save(*args,**kwargs)
 
 # Create your models here.
 
