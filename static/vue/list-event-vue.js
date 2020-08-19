@@ -48,12 +48,16 @@ var vueapp = new Vue({
         update_action: function(event,user_id){
             var action_select = $('#id_action')[0]
             var action = action_select.options[action_select.selectedIndex].value
+            console.log(action)
         },
-        find_user_event_action: function(event,user_id){
+        get_event_user: function(event,user){
+
+        },
+        find_eventuser: function(event,user_id){
             var return_val = false
             event.members.forEach(member => {
                 if (parseInt(member.user.id) == parseInt(user_id)){
-                    return_val = member.action
+                    return_val = member
                 }
             });
             return return_val

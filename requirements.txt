@@ -4,3 +4,4 @@ django-phone-field
 django-crispy-forms
 IPython
 psycopg2
+Pillow

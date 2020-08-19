@@ -37,3 +37,8 @@ class EventUserViewSet(ModelViewSet):
     serializer_class = EventUserSerializer
     queryset = EventUser.objects.all()
 
+   # def create(self, request, *args, **kwargs):
+   #     print(request.data)
+        #serializer = self.serializer_class(...)
+        #data = serializer.data
+
