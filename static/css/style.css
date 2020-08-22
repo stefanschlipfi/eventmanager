@@ -7,6 +7,12 @@
     padding: 2px 2px 0px 2px;
     font-size: 12pt;
 }
+.modal-postion-fix{
+    display: block;
+    top: 50%;
+    padding-top: 40px;
+}
+
 .card-body-title h5, button{
     display: inline-block;
 }

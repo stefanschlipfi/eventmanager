@@ -5,19 +5,13 @@ from django.shortcuts import get_object_or_404
 from .serializers import EventSerializer,EventUserSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import Response
-
+from rest_framework import status
 from .models import Event,EventUser
 
 # Create your views here.
 
-class EventViewSet(ModelViewSet):
-    """
-    A viewset for viewing and editing Events.
-    """
-    serializer_class = EventSerializer
-    queryset = Event.objects.all()
-
-    def list(self, request, **kwargs):
+class EventMixin():
+    def get_event_list(self):
         return_data = []
         for event in Event.objects.all():
             resp = EventSerializer(event).data
@@ -27,18 +21,33 @@ class EventViewSet(ModelViewSet):
                 sermembers.append(memberser.data)
             resp['members'] = sermembers
             return_data.append(resp)
+        return return_data
 
-        return Response(data = return_data)
+class EventViewSet(EventMixin,ModelViewSet):
+    """
+    A viewset for viewing and editing Events.
+    """
+    serializer_class = EventSerializer
+    queryset = Event.objects.all()
 
-class EventUserViewSet(ModelViewSet):
+    def list(self, request, **kwargs):
+        return Response(data = self.get_event_list())
+
+class EventUserViewSet(EventMixin,ModelViewSet):
     """
     A viewset for viewing and editing Events.
     """
     serializer_class = EventUserSerializer
     queryset = EventUser.objects.all()
 
-   # def create(self, request, *args, **kwargs):
-   #     print(request.data)
-        #serializer = self.serializer_class(...)
-        #data = serializer.data
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            data = serializer.data
+            user = get_object_or_404(User,pk=data['user_id'])
+            event = get_object_or_404(Event,pk=data['event_id'])
+            new_eventuser_obj = EventUser.objects.create(event=event,user=user,action=data['action'])
+            return Response(data={"created":data,'event_list':self.get_event_list()},status=status.HTTP_201_CREATED)
+        else:
+            print("Exception")
 

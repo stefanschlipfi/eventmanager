@@ -36,21 +36,6 @@
                 </div>
             </div>
             <button v-on:click="event_detail(event)" class="btn btn-primary btn-right">< Back</button>
-
-            <div class="modal fade" id="action_modal" tabindex="-1" role="dialog" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-body">
-                        {{event_user_form|crispy}}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button v-on:click="update_action(event,{{user.id}})" type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
         
         </div>
         <div v-show="event.card_view">
@@ -64,6 +49,20 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="action_modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-body">
+                {{event_user_form|crispy}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button v-on:click="submit_action_modal({{user.id}})" type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
 <script src="{% static 'vue/list-event-vue.js' %}"></script>
 </div>
 

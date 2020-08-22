@@ -27,12 +27,14 @@ class EventUser(models.Model):
     def __str__(self):
         return f'{self.user.username} {self.action} {self.event.name}'
 
-    # write in signals.py reciver
-    #def create(self,*args,**kwargs):
-    #    all_user_objects = EventUser.objects.filter(user=self.user)
-    #    if len(all_user_objects.filter(event = self.event)) > 0:
-    #        raise DataError("EventUser: {} allready exists in event: {}".format(self.user.username,self.event.name))
-    #    super().save(*args,**kwargs)
+    def save(self,*args,**kwargs):
+        all_user_objects = EventUser.objects.filter(user=self.user)
+        pk_exits = all_user_objects.filter(pk=self.pk)
+
+        #dont allow to create duplicate of EventUser
+        if len(all_user_objects.filter(event = self.event)) > 0 and len(pk_exits) == 0:
+            raise DataError("EventUser: {} allready exists in event: {}".format(self.user.username,self.event.name))
+        super().save(*args,**kwargs)
 
 # Create your models here.
 

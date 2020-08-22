@@ -9,15 +9,19 @@ var vueapp = new Vue({
     created () {
         this.api_call('http://localhost:8000/api/event/?format=json','GET')
         .then(response => {
-            response.data.forEach(item => {
+            this.init_events(response.data)
+        })
+    },
+    methods: {
+        init_events: function(event_list){
+            this.events = []
+            event_list.forEach(item => {
                 Object.assign(item,{'edit':false});
                 Object.assign(item,{'detail':false});
                 Object.assign(item,{'card_view':true});
                 this.events.push(item);
             });
-        })
-    },
-    methods: {
+        },
         event_detail: function(event){
             console.log(''.concat('event_detail ',event.name))
             this.invert_detail(event)
@@ -45,14 +49,42 @@ var vueapp = new Vue({
             delete new_events_array
 
         },
+
+        //workaround for action_modal cannot open modal in js
+        get_active_detail_event: function(){
+        // find active detail view retrun item / false
+            var return_val = false
+            this.events.forEach(item => {
+                if (item.detail)
+                    return_val = item;
+            });
+            return return_val
+        },
+        submit_action_modal: function(user_id){
+            event = this.get_active_detail_event();
+            if (event == false){
+                this.err_messages.push("cannot find active detail event");
+            }else{
+                this.err_messages = []
+                this.update_action(event,user_id)
+            }
+        },
         update_action: function(event,user_id){
             var action_select = $('#id_action')[0]
             var action = action_select.options[action_select.selectedIndex].value
-            console.log(action)
+            console.log(''.concat("action:",action," event_id:",event.id," user_id:",user_id))
+            data = new Object
+            data['action'] = action
+            data['event_id'] = event.id
+            data['user_id'] = user_id
+            this.api_call("http://localhost:8000/api/eventuser/?format=json","POST",json_data=data)
+            .then(resp => {
+                this.err_messages = []
+                this.init_events(resp.data['event_list'])
+                this.event_detail(event)
+            })
         },
-        get_event_user: function(event,user){
 
-        },
         find_eventuser: function(event,user_id){
             var return_val = false
             event.members.forEach(member => {
