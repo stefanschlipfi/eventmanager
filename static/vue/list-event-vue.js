@@ -79,7 +79,6 @@ var vueapp = new Vue({
             data['user_id'] = user_id
             this.api_call("http://localhost:8000/api/eventuser/?format=json","POST",json_data=data)
             .then(resp => {
-                this.err_messages = []
                 this.init_events(resp.data['event_list'])
                 this.event_detail(event)
             })
@@ -94,10 +93,17 @@ var vueapp = new Vue({
             });
             return return_val
         },
+        show_error_message(HTTP_CODE,message){
+            error = ''.concat("Code: ",HTTP_CODE,' ',message)
+            this.err_messages.push(error)
+        },
         api_call: function(url,method,json_data="{}"){
             resp = this.async_api_call_axios(url,method,json_data)
+            resp.then(e => {
+                this.err_messages = []
+            });
             resp.catch(error => {
-                this.err_messages.push(error)
+                this.show_error_message(error.response.status,error.response.data['message'])
             });
             resp.finally(() => {
                 this.loading = false;

@@ -8,6 +8,8 @@ from rest_framework.views import Response
 from rest_framework import status
 from .models import Event,EventUser
 
+from django.db import DataError
+from .exceptions import BadRequestException,ObjectExistsException
 # Create your views here.
 
 class EventMixin():
@@ -46,8 +48,14 @@ class EventUserViewSet(EventMixin,ModelViewSet):
             data = serializer.data
             user = get_object_or_404(User,pk=data['user_id'])
             event = get_object_or_404(Event,pk=data['event_id'])
-            new_eventuser_obj = EventUser.objects.create(event=event,user=user,action=data['action'])
-            return Response(data={"created":data,'event_list':self.get_event_list()},status=status.HTTP_201_CREATED)
+            try:
+                new_eventuser_obj = EventUser.objects.create(event=event,user=user,action=data['action'])
+            except DataError as e:
+                raise ObjectExistsException(detail=e) 
+            else:
+                return Response(data={"created":data,'event_list':self.get_event_list()},status=status.HTTP_201_CREATED)
         else:
-            print("Exception")
+            #raise Serializer Exception
+            super().create(request, *args, **kwargs)
+
 
