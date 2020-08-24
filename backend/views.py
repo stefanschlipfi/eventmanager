@@ -10,6 +10,7 @@ from .models import Event,EventUser
 
 from django.db import DataError
 from .exceptions import BadRequestException,ObjectExistsException
+from rest_framework.exceptions import PermissionDenied
 # Create your views here.
 
 class EventMixin():
@@ -42,12 +43,20 @@ class EventUserViewSet(EventMixin,ModelViewSet):
     serializer_class = EventUserSerializer
     queryset = EventUser.objects.all()
 
+    @staticmethod
+    def check_permission(request,fuser):
+        if request.user == fuser:
+            return True
+        else:
+            raise PermissionDenied()
+
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             data = serializer.data
             user = get_object_or_404(User,pk=data['user_id'])
             event = get_object_or_404(Event,pk=data['event_id'])
+            self.check_permission(request=request,fuser=user)
             try:
                 new_eventuser_obj = EventUser.objects.create(event=event,user=user,action=data['action'])
             except DataError as e:
