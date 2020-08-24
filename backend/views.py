@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from .serializers import EventSerializer,EventUserSerializer
+from .serializers import EventSerializer,EventUserSerializer,EventUserUpdateSerializer,EventUserCreateSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import Response
 from rest_framework import status
@@ -40,12 +40,18 @@ class EventUserViewSet(EventMixin,ModelViewSet):
     """
     A viewset for viewing and editing Events.
     """
-    serializer_class = EventUserSerializer
     queryset = EventUser.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == 'update':
+            return EventUserUpdateSerializer
+        elif self.action == 'create':
+            return EventUserCreateSerializer
+        return EventUserSerializer
 
     @staticmethod
     def check_permission(request,fuser):
-        if request.user == fuser:
+        if request.user == fuser or request.user.is_superuser:
             return True
         else:
             raise PermissionDenied()
@@ -68,3 +74,13 @@ class EventUserViewSet(EventMixin,ModelViewSet):
             super().create(request, *args, **kwargs)
 
 
+    def update(self,request,*args,**kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            data = serializer.data
+            obj = EventUser.objects.get(pk=data['eventuser_id'])
+            self.check_permissions(request,obj.user)
+            obj.action = data['action']
+            return Response(data={'updated':data},status=status.HTTP_200_OK)
+        else:
+            super().update(request,*args,**kwargs)
