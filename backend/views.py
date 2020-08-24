@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from .serializers import EventSerializer,EventUserSerializer,EventUserUpdateSerializer,EventUserCreateSerializer
+from .serializers import EventSerializer,EventUserSerializer,EventUserCreateSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import Response
 from rest_framework import status
@@ -43,9 +43,7 @@ class EventUserViewSet(EventMixin,ModelViewSet):
     queryset = EventUser.objects.all()
 
     def get_serializer_class(self):
-        if self.action == 'update':
-            return EventUserUpdateSerializer
-        elif self.action == 'create':
+        if self.action == 'create':
             return EventUserCreateSerializer
         return EventUserSerializer
 
@@ -57,7 +55,8 @@ class EventUserViewSet(EventMixin,ModelViewSet):
             raise PermissionDenied()
 
     def create(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(data=request.data)
         if serializer.is_valid():
             data = serializer.data
             user = get_object_or_404(User,pk=data['user_id'])
@@ -75,12 +74,5 @@ class EventUserViewSet(EventMixin,ModelViewSet):
 
 
     def update(self,request,*args,**kwargs):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            data = serializer.data
-            obj = EventUser.objects.get(pk=data['eventuser_id'])
-            self.check_permissions(request,obj.user)
-            obj.action = data['action']
-            return Response(data={'updated':data},status=status.HTTP_200_OK)
-        else:
-            super().update(request,*args,**kwargs)
+        super().update(request,*args,**kwargs)
+        return Response(data={'event_list':self.get_event_list()},status=status.HTTP_200_OK)

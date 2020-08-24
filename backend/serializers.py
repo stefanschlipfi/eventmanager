@@ -21,10 +21,3 @@ class EventUserCreateSerializer(serializers.ModelSerializer):
         model = EventUser
         exclude = []
         depth = 1
-
-class EventUserUpdateSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=True,validators=[MinValueValidator(1)])
-    class Meta:
-        model = EventUser
-        exclude = []
-        depth = 1
