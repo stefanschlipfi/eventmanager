@@ -72,7 +72,8 @@ var vueapp = new Vue({
             }
             var tmpevents = []
             this.events.forEach(item => {
-                Object.assign(item,{'sorted_members':sorted_members});
+                if (item.id == event.id)
+                    Object.assign(item,{'sorted_members':sorted_members});
                 tmpevents.push(item);
             });
             this.events = tmpevents
@@ -91,13 +92,11 @@ var vueapp = new Vue({
         tab_action_setactive(event,action){
             // disable all
             var actions = ['all','accept','reject','maybe']
-            this.events.forEach(item => {
-                actions.forEach(ac => {
-                    var tmp = $('#'.concat(item.id,ac))
-                    tmp[0].classList.remove('active')
-                    if (ac == action && item.id == event.id)
-                        tmp[0].classList.add('active')
-                })
+            actions.forEach(ac => {
+                var tmp = $('#'.concat(event.id,ac))
+                tmp[0].classList.remove('active')
+                if (ac == action)
+                    tmp[0].classList.add('active')
             });
 
         },
