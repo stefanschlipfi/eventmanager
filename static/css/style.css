@@ -7,6 +7,14 @@
     padding: 2px 2px 0px 2px;
     font-size: 12pt;
 }
+.detail-card-description{
+    min-height: 50px;
+}
+.action-btn{
+    margin-left: 40px;
+    margin-right: 10px;
+}
+
 .modal-postion-fix{
     display: block;
     top: 50%;

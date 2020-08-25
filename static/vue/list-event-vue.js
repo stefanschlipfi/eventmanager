@@ -4,13 +4,18 @@ var vueapp = new Vue({
     data: {
         events: [],
         err_messages: [],
-        _before_edit: new Object()
+        _before_edit: new Object(),
+        action_btn_dict: new Object()
     },
     created () {
         this.api_call('http://localhost:8000/api/event/?format=json','GET')
         .then(response => {
             this.init_events(response.data)
         })
+        Object.assign(this.action_btn_dict,{'accept':{value: "Zusgesagt", btn_class: "btn btn-outline-success", icon: "done"} })
+        Object.assign(this.action_btn_dict,{'maybe':{value: "Mit vorbehalt zugesagt", btn_class: "btn btn-outline-warning", icon: "done"} })
+        Object.assign(this.action_btn_dict,{'reject':{value: "Abgesagt", btn_class: "btn btn-outline-danger", icon: "done"} })
+
     },
     methods: {
         init_events: function(event_list){

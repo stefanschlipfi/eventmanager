@@ -25,12 +25,17 @@
                         <h5 class="card-title">[[event.name]]</h5>
                         <!-- action.options[action.selectedIndex].value -->
                         <button v-if="!find_eventuser(event,{{ user.id }})" type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#action_modal">Teilnehmen</button>
-                        <button v-else class="btn btn-outline-success" data-toggle="modal" data-target="#action_modal">
-                            <span class="material-icons">done</span>[[find_eventuser(event,{{ user.id }}).action]]
-                        </button>
+                        <div v-else>
+                            <div v-for="(obj,action) in action_btn_dict">
+                                <div v-if ="action == find_eventuser(event,{{ user.id }}).action">
+                                        <button data-toggle="modal" v-bind:class="[[obj.btn_class]]" class="action-btn" data-target="#action_modal">
+                                            <span class="material-icons">[[obj.icon]]</span>[[obj.value]]
+                                        </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <p class="card-text">[[event.descripton]]</p>
+                    <p class="detail-card-description card-text">[[event.descripton]]</p>
                     <!--<p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
                     <ul class="list-group">
                         <li class="list-group-item" v-for="member in event.members">user: [[member.user.username]]</li>
