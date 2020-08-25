@@ -27,6 +27,8 @@ var vueapp = new Vue({
                 Object.assign(item,{'edit':false});
                 Object.assign(item,{'detail':false});
                 Object.assign(item,{'card_view':true});
+                //set default sorted members to all members
+                Object.assign(item,{'sorted_members':item.members});
                 this.events.push(item);
             });
         },
@@ -57,7 +59,24 @@ var vueapp = new Vue({
             delete new_events_array
 
         },
-
+        sort_members: function(event,action){
+            this.tab_action_setactive(event,action)
+            var sorted_members = []
+            if (action == 'all')
+                sorted_members = event.members
+            else{
+                event.members.forEach(mem => {
+                    if (mem.action == action)
+                        sorted_members.push(mem)
+                });
+            }
+            var tmpevents = []
+            this.events.forEach(item => {
+                Object.assign(item,{'sorted_members':sorted_members});
+                tmpevents.push(item);
+            });
+            this.events = tmpevents
+        },
         //workaround for action_modal cannot open modal in js
         get_active_detail_event: function(){
         // find active detail view retrun item / false
@@ -67,6 +86,20 @@ var vueapp = new Vue({
                     return_val = item;
             });
             return return_val
+        },
+        // workaround for disable tab-action active
+        tab_action_setactive(event,action){
+            // disable all
+            var actions = ['all','accept','reject','maybe']
+            this.events.forEach(item => {
+                actions.forEach(ac => {
+                    var tmp = $('#'.concat(item.id,ac))
+                    tmp[0].classList.remove('active')
+                    if (ac == action && item.id == event.id)
+                        tmp[0].classList.add('active')
+                })
+            });
+
         },
         submit_action_modal: function(user_id){
             event = this.get_active_detail_event();

@@ -36,8 +36,17 @@
                         </div>
                     </div>
                     <p class="detail-card-description card-text">[[event.descripton]]</p>
-                    <!--<p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
-                    <ul class="list-group" v-for="member in event.members">
+
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a v-bind:id="concat(event.id,'all')" v-on:click="sort_members(event,'all')" class="nav-link active">All</a>
+                        </li>
+                        <li class="nav-item" v-for="(obj,action) in action_btn_dict">
+                          <a v-bind:id="concat(event.id,action)" v-on:click="sort_members(event,action)" class="nav-link">[[obj.value]]</a>
+                        </li>
+                    </ul>
+
+                    <ul class="list-group" v-for="member in event.sorted_members">
                         <div v-for="(obj,action) in action_btn_dict">
                             <div v-if ="action == member.action">
                                 <li class="list-group-item list-group-item-mem">
@@ -47,6 +56,7 @@
                             </div>
                         </div>
                     </ul>
+
                 </div>
             </div>
             <button v-on:click="event_detail(event)" class="btn btn-primary btn-right">< Back</button>

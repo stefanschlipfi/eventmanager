@@ -10,6 +10,10 @@
 .detail-card-description{
     min-height: 50px;
 }
+.active{
+    color:var(--mdc-theme-primary,blue) !important;
+}
+
 .action-btn{
     min-width: 20%;
     margin-right: 10px;
