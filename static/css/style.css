@@ -11,8 +11,21 @@
     min-height: 50px;
 }
 .action-btn{
-    margin-left: 40px;
+    min-width: 20%;
     margin-right: 10px;
+}
+.list-group-item-mem{
+    min-height: 60px;
+}
+.list-action{
+    position: absolute;
+    top: 1.5%;
+    right: 0.5%;
+    padding: 1%;
+    min-width: 20%;
+    text-align: center;
+    margin: 0.5%;    
+    border-radius: 10px;
 }
 
 .modal-postion-fix{

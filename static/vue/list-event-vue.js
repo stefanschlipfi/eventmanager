@@ -12,12 +12,15 @@ var vueapp = new Vue({
         .then(response => {
             this.init_events(response.data)
         })
-        Object.assign(this.action_btn_dict,{'accept':{value: "Zusgesagt", btn_class: "btn btn-outline-success", icon: "done"} })
-        Object.assign(this.action_btn_dict,{'maybe':{value: "Mit vorbehalt zugesagt", btn_class: "btn btn-outline-warning", icon: "done"} })
-        Object.assign(this.action_btn_dict,{'reject':{value: "Abgesagt", btn_class: "btn btn-outline-danger", icon: "done"} })
+        Object.assign(this.action_btn_dict,{'accept':{value: "Zusgesagt", class: "success", icon: "done"} })
+        Object.assign(this.action_btn_dict,{'maybe':{value: "Mit vorbehalt zugesagt", class: "warning", icon: "access_time"} })
+        Object.assign(this.action_btn_dict,{'reject':{value: "Abgesagt", class: "danger", icon: "clear"} })
 
     },
     methods: {
+        concat: function(str1,str2){
+            return ''.concat(str1,str2)
+        },
         init_events: function(event_list){
             this.events = []
             event_list.forEach(item => {

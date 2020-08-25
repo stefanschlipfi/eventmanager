@@ -28,7 +28,7 @@
                         <div v-else>
                             <div v-for="(obj,action) in action_btn_dict">
                                 <div v-if ="action == find_eventuser(event,{{ user.id }}).action">
-                                        <button data-toggle="modal" v-bind:class="[[obj.btn_class]]" class="action-btn" data-target="#action_modal">
+                                        <button data-toggle="modal" v-bind:class="concat('btn btn-outline-',obj.class)" class="action-btn" data-target="#action_modal">
                                             <span class="material-icons">[[obj.icon]]</span>[[obj.value]]
                                         </button>
                                 </div>
@@ -37,8 +37,15 @@
                     </div>
                     <p class="detail-card-description card-text">[[event.descripton]]</p>
                     <!--<p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
-                    <ul class="list-group">
-                        <li class="list-group-item" v-for="member in event.members">user: [[member.user.username]]</li>
+                    <ul class="list-group" v-for="member in event.members">
+                        <div v-for="(obj,action) in action_btn_dict">
+                            <div v-if ="action == member.action">
+                                <li class="list-group-item list-group-item-mem">
+                                    [[member.user.first_name]] [[member.user.last_name]]
+                                    <span v-bind:class="concat('list-group-item-',obj.class)" class="list-action">[[obj.value]]</span>
+                                </li>
+                            </div>
+                        </div>
                     </ul>
                 </div>
             </div>
