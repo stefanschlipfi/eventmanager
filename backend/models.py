@@ -6,6 +6,7 @@ class Event(models.Model):
     name = models.CharField(max_length=20)
     image = models.ImageField(default='event-images/default.png', upload_to='event-images')
     descripton = models.TextField(null=True,blank=True)
+    date = models.DateTimeField(null=True,blank=True)
     #members = models.ManyToManyField(EventUser)
 
     def get_members(self):
@@ -23,6 +24,7 @@ class EventUser(models.Model):
     ]
     action = models.CharField(max_length=6,choices=ACTION_CHOICES)
     event = models.ForeignKey(Event,on_delete=models.CASCADE)
+    comment = models.TextField(blank=True,null=True)
 
     def __str__(self):
         return f'{self.user.username} {self.action} {self.event.name}'

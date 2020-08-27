@@ -10,7 +10,7 @@ from .models import Event,EventUser
 
 from django.db import DataError
 from .exceptions import BadRequestException,ObjectExistsException
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied,NotFound
 # Create your views here.
 
 class EventMixin():
@@ -33,8 +33,17 @@ class EventViewSet(EventMixin,ModelViewSet):
     serializer_class = EventSerializer
     queryset = Event.objects.all()
 
+    
     def list(self, request, **kwargs):
         return Response(data = self.get_event_list())
+    
+    def retrieve(self, request, pk=None,**kwargs):
+        queryset = self.get_event_list()
+        for item in queryset:
+            if int(item['id']) == int(pk):
+                return Response(data=item)
+        raise NotFound() 
+
 
 class EventUserViewSet(EventMixin,ModelViewSet):
     """
@@ -54,6 +63,14 @@ class EventUserViewSet(EventMixin,ModelViewSet):
         else:
             raise PermissionDenied()
 
+    def get_event(self,event_id):
+        event = get_object_or_404(Event,pk=event_id)
+        queryset = self.get_event_list()
+        for item in queryset:
+            if int(item['id']) == int(event.id):
+                return item
+        raise NotFound()
+
     def create(self, request, *args, **kwargs):
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(data=request.data)
@@ -67,7 +84,8 @@ class EventUserViewSet(EventMixin,ModelViewSet):
             except DataError as e:
                 raise ObjectExistsException(detail=e) 
             else:
-                return Response(data={"created":data,'event_list':self.get_event_list()},status=status.HTTP_201_CREATED)
+                event_id = new_eventuser_obj.event.id
+                return Response(data={"created":data,'event':self.get_event(event_id)},status=status.HTTP_201_CREATED)
         else:
             #raise Serializer Exception
             super().create(request, *args, **kwargs)
@@ -75,4 +93,9 @@ class EventUserViewSet(EventMixin,ModelViewSet):
 
     def update(self,request,*args,**kwargs):
         super().update(request,*args,**kwargs)
-        return Response(data={'event_list':self.get_event_list()},status=status.HTTP_200_OK)
+        event_user = get_object_or_404(EventUser,pk=kwargs.get('pk'))
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(instance=event_user)
+        data = serializer.data
+        data.update({'event':self.get_event(event_user.event.id)})
+        return Response(data=data,status=status.HTTP_200_OK)

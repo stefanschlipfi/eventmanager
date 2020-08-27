@@ -15,4 +15,4 @@ class EventUserForm(forms.ModelForm):
     
     class Meta:
         model = EventUser
-        fields = ['action']
+        fields = ['action','comment']

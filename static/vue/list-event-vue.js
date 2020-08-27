@@ -12,8 +12,8 @@ var vueapp = new Vue({
         .then(response => {
             this.init_events(response.data)
         })
-        Object.assign(this.action_btn_dict,{'accept':{value: "Zusgesagt", class: "success", icon: "done"} })
-        Object.assign(this.action_btn_dict,{'maybe':{value: "Mit vorbehalt zugesagt", class: "warning", icon: "access_time"} })
+        Object.assign(this.action_btn_dict,{'accept':{value: "Zugesagt", class: "success", icon: "done"} })
+        Object.assign(this.action_btn_dict,{'maybe':{value: "Mit Vorbehalt zugesagt", class: "warning", icon: "access_time"} })
         Object.assign(this.action_btn_dict,{'reject':{value: "Abgesagt", class: "danger", icon: "clear"} })
 
     },
@@ -24,13 +24,26 @@ var vueapp = new Vue({
         init_events: function(event_list){
             this.events = []
             event_list.forEach(item => {
-                Object.assign(item,{'edit':false});
-                Object.assign(item,{'detail':false});
-                Object.assign(item,{'card_view':true});
-                //set default sorted members to all members
-                Object.assign(item,{'sorted_members':item.members});
-                this.events.push(item);
+                this.events.push(this.init_event(item));
             });
+        },
+        init_event: function(event){
+            Object.assign(event,{'edit':false});
+            Object.assign(event,{'detail':false});
+            Object.assign(event,{'card_view':true});
+            //set default sorted members to all members
+            Object.assign(event,{'sorted_members':event.members});
+            return event
+        },
+        update_event: function(event){
+            var new_events_array = []
+            this.events.forEach(item => {
+                if (parseInt(item.id) == parseInt(event.id))
+                    new_events_array.push(event)
+                else
+                    new_events_array.push(item)
+            });
+            this.events = new_events_array
         },
         event_detail: function(event){
             console.log(''.concat('event_detail ',event.name))
@@ -93,6 +106,7 @@ var vueapp = new Vue({
             // disable all
             var actions = ['all','accept','reject','maybe']
             actions.forEach(ac => {
+                console.log('#'.concat(event.id,ac))
                 var tmp = $('#'.concat(event.id,ac))
                 tmp[0].classList.remove('active')
                 if (ac == action)
@@ -110,31 +124,31 @@ var vueapp = new Vue({
                 var action = action_select.options[action_select.selectedIndex].value
                 var eventuser = this.find_eventuser(event,user_id)
                 if (eventuser)  
-                    this.update_eventuser(eventuser,action)
+                    resp = this.update_eventuser(eventuser,action)
                 else
-                    this.create_eventuser(event,user_id,action)
+                    resp = this.create_eventuser(event,user_id,action)
+
+                resp.then(r => {
+                    var event = this.init_event(r.data['event'])
+                    event.card_view = false
+                    event.detail = true
+                    this.update_event(event)
+                    this.sort_members(event,action)
+                });
             }
         },
         update_eventuser: function(eventuser,action){
             data = new Object
             data['action'] = action
-            this.api_call(''.concat("http://localhost:8000/api/eventuser/",eventuser.id,"/?format=json"),"PUT",json_data=data)
-            .then(resp => {
-                this.init_events(resp.data['event_list'])
-                this.event_detail(event)
-            })
-            
+            event = eventuser.event
+            return this.api_call(''.concat("http://localhost:8000/api/eventuser/",eventuser.id,"/?format=json"),"PUT",json_data=data)            
         },
         create_eventuser: function(event,user_id,action){
             data = new Object
             data['action'] = action
             data['event_id'] = event.id
             data['user_id'] = user_id
-            this.api_call("http://localhost:8000/api/eventuser/?format=json","POST",json_data=data)
-            .then(resp => {
-                this.init_events(resp.data['event_list'])
-                this.event_detail(event)
-            })
+            return this.api_call("http://localhost:8000/api/eventuser/?format=json","POST",json_data=data)
         },
 
         find_eventuser: function(event,user_id){

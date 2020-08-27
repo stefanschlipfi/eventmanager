@@ -1,9 +1,10 @@
 import pandas as pd
 from django.contrib.auth.models import User
-from backend.models import EventUser
+from backend.models import EventUser,Event
+
 
 df = pd.read_excel('C:/Users/ste0001/Downloads/Teilnehmerliste_Kartrennen_Stetteldorf_2020.xlsx',sheet_name='Kart2020')
-d1 = df[df.Zusage == 'Ja']
+#d1 = df[df.Zusage == 'Ja']
 
 def create_username(first_name,last_name,all_usernames):
     
@@ -18,10 +19,10 @@ def create_username(first_name,last_name,all_usernames):
     return False,'cannot assign username'
 
 
-def load_users_list():
+def load_users_list(dataframe):
     users = []
     all_usernames = [user.username for user in User.objects.all()]
-    for id,row in d1.iterrows():
+    for id,row in dataframe.iterrows():
         tmp = {}
         tmp['first_name'] = row.Vorname
         tmp['last_name'] = row.Nachname
@@ -33,3 +34,18 @@ def load_users_list():
         users.append(tmp)
     return users
 
+def create_user(event,users):
+    for user in users:
+        obj = User()
+        obj.username = user['username']
+        obj.first_name = user['first_name']
+        obj.last_name = user['last_name']
+        obj.set_password = user['password']
+        obj.save()
+        EventUser.objects.create(event=event,user=obj,action=user['action'])
+
+if __name__ == "__main__":
+    event = Event.objects.all().first()
+    d1 = df[df.Zusage == 'Ja']
+    users = load_users_list(d1)
+    create_user(event,users)
