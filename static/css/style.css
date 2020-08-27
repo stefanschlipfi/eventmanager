@@ -13,17 +13,39 @@
 .active{
     color:var(--mdc-theme-primary,blue) !important;
 }
+
 .nav-action-dropdown{
     display: flex;
     flex-grow: 1;
 }
-.nav-action-dropdown button{
-    border: 2px solid;
+.nav-action-dropdown.black{
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.nav-action-dropdown.success{
+    border: 2px solid var(--success);
+}
+.nav-action-dropdown.warning{
+    border: 2px solid var(--warning,orange);
+}
+.nav-action-dropdown.danger{
+    border: 2px solid var(--danger,red);
 }
 .action-btn{
+    display: flex;
+    flex-direction: row;
     min-width: 20%;
     margin-right: 10px;
 }
+.action-btn > .icon{
+    border-right: 1.5px solid;
+    padding-right: 8px;
+}
+.action-btn > .value{
+    flex-grow: 1;
+    text-align: center;
+}
+
 .list-group-item-mem{
     min-height: 60px;
 }

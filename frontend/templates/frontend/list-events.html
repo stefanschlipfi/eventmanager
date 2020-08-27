@@ -22,24 +22,28 @@
                 <img class="card-img-top" v-bind:src="[[event.image]]" alt="Card image cap">
                 <div class="card-body">
                     <div class="card-body-title">
-                        <h5 class="card-title">[[event.name]]</h5>
+                        <h4 class="card-title">[[event.name]]</h4>
                         <!-- action.options[action.selectedIndex].value -->
                         <button v-if="!find_eventuser(event,{{ user.id }})" type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#action_modal">Teilnehmen</button>
-                        <div v-else>
-                            <div v-for="(obj,action) in action_btn_dict">
-                                <div v-if ="action == find_eventuser(event,{{ user.id }}).action">
-                                        <button data-toggle="modal" v-bind:class="concat('btn btn-outline-',obj.class)" class="action-btn" data-target="#action_modal">
-                                            <span class="material-icons">[[obj.icon]]</span>[[obj.value]]
-                                        </button>
-                                </div>
+                        <div v-else v-for="(obj,action) in action_btn_dict">
+                            <div v-if ="action == find_eventuser(event,{{ user.id }}).action">
+                                    <button data-toggle="modal" v-bind:class="concat('btn btn-outline-',obj.class)" class="action-btn" data-target="#action_modal">
+                                        <span class="material-icons icon">[[obj.icon]]</span>
+                                        <span class="value">[[obj.value]]</span>
+                                    </button>
                             </div>
                         </div>
                     </div>
+                    <div class="">
+                        [[event.date]]
+                    </div>
+                    <br>
+                    <h6>Beschreibung:</h6>
                     <p class="detail-card-description card-text">[[event.descripton]]</p>
 
                     <div v-if="screen.width < 700">
-                        <div class="btn-group dropdown nav-action-dropdown mb-2">
-                            <button id="action-dropdown-btn" type="button" class="btn btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <div id="action-dropdown-btn" class="btn-group dropdown mb-2 nav-action-dropdown black">
+                            <button type="button" class="btn btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               [[dropdownlabel]]
                             </button>
                             <div class="dropdown-menu">

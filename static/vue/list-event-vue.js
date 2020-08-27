@@ -112,7 +112,6 @@ var vueapp = new Vue({
             // disable all
             var actions = ['all','accept','reject','maybe']
             actions.forEach(ac => {
-                console.log('#'.concat(event.id,ac))
                 var tmp = $('#'.concat(event.id,ac))
                 tmp[0].classList.remove('active')
                 if (ac == action)

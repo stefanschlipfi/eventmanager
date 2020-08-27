@@ -19,7 +19,7 @@ class EventUser(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     ACTION_CHOICES = [
         ('accept','Teilnehmen'),
-        ('maybe','Mit vorbehalt'),
+        ('maybe','Mit Vorbehalt'),
         ('reject','Absagen')
     ]
     action = models.CharField(max_length=6,choices=ACTION_CHOICES)
