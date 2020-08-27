@@ -93,14 +93,25 @@ class EventUserViewSet(EventMixin,ModelViewSet):
 
     def update(self,request,*args,**kwargs):
 
+        #get eventuser to check permissions
+        event_user = get_object_or_404(EventUser,pk=kwargs.get('pk'))
+        self.check_permission(request=request,fuser=event_user.user)
+        super().update(request,*args,**kwargs)
+
+        #get event user again with new action
         event_user = get_object_or_404(EventUser,pk=kwargs.get('pk'))
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(instance=event_user)
         data = serializer.data
         data.update({'event':self.get_event(event_user.event.id)})
+        return Response(data=data,status=status.HTTP_200_OK)
 
-        self.check_permission(request=request,fuser=event_user.user)
+    def retrieve(self, request, *args,**kwargs):
+        super().retrieve(request, *args, **kwargs)
 
-        
-        super().update(request,*args,**kwargs)
+        event_user = get_object_or_404(EventUser,pk=kwargs.get('pk'))
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(instance=event_user)
+        data = serializer.data
+        data.update({'event':self.get_event(event_user.event.id)})
         return Response(data=data,status=status.HTTP_200_OK)
