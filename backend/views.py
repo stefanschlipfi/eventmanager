@@ -92,10 +92,15 @@ class EventUserViewSet(EventMixin,ModelViewSet):
 
 
     def update(self,request,*args,**kwargs):
-        super().update(request,*args,**kwargs)
+
         event_user = get_object_or_404(EventUser,pk=kwargs.get('pk'))
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(instance=event_user)
         data = serializer.data
         data.update({'event':self.get_event(event_user.event.id)})
+
+        self.check_permission(request=request,fuser=event_user.user)
+
+        
+        super().update(request,*args,**kwargs)
         return Response(data=data,status=status.HTTP_200_OK)
