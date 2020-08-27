@@ -18,6 +18,7 @@
     <div v-for="event in events">
 
         <div v-show="event.detail">
+            <a v-on:click="event_detail(event)" class="btn-detailview-back"><span class="material-icons">arrow_back_ios</span></a>
             <div class="card mb-3" >
                 <img class="card-img-top" v-bind:src="[[event.image]]" alt="Card image cap">
                 <div class="card-body">
@@ -79,7 +80,6 @@
 
                 </div>
             </div>
-            <button v-on:click="event_detail(event)" class="btn btn-primary btn-right">< Back</button>
         
         </div>
         <div v-show="event.card_view">

@@ -6,7 +6,7 @@ var vueapp = new Vue({
         err_messages: [],
         _before_edit: new Object(),
         action_btn_dict: new Object(),
-        dropdownlabel: "Sort by Action",
+        dropdownlabel: "All",
     },
 
     created () {
