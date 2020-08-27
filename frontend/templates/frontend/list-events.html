@@ -37,14 +37,30 @@
                     </div>
                     <p class="detail-card-description card-text">[[event.descripton]]</p>
 
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                            <a v-bind:id="concat(event.id,'all')" v-on:click="sort_members(event,'all')" class="nav-link active">All</a>
-                        </li>
-                        <li class="nav-item" v-for="(obj,action) in action_btn_dict">
-                          <a v-bind:id="concat(event.id,action)" v-on:click="sort_members(event,action)" class="nav-link">[[obj.value]]</a>
-                        </li>
-                    </ul>
+                    <div v-if="screen.width < 700">
+                        <div class="btn-group dropdown nav-action-dropdown mb-2">
+                            <button id="action-dropdown-btn" type="button" class="btn btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              [[dropdownlabel]]
+                            </button>
+                            <div class="dropdown-menu">
+                              <!-- Dropdown menu links -->
+                              <a v-bind:id="concat(event.id,'all')" v-on:click="sort_members(event,'all')" class="nav-link">All</a>
+                              <a v-for="(obj,action) in action_btn_dict" v-bind:id="concat(event.id,action)" v-on:click="sort_members(event,action)" class="nav-link">[[obj.value]]</a>
+                            </div>
+                          </div>
+                    </div>
+                    <div v-else>
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a v-bind:id="concat(event.id,'all')" v-on:click="sort_members(event,'all')" class="nav-link active">All</a>
+                            </li>
+                            <li class="nav-item" v-for="(obj,action) in action_btn_dict">
+                            <a v-bind:id="concat(event.id,action)" v-on:click="sort_members(event,action)" class="nav-link">[[obj.value]]</a>
+                            </li>
+                        </ul>
+                    </div>
+
+
 
                     <ul class="list-group" v-for="member in event.sorted_members">
                         <div v-for="(obj,action) in action_btn_dict">

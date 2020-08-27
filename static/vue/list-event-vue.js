@@ -5,15 +5,17 @@ var vueapp = new Vue({
         events: [],
         err_messages: [],
         _before_edit: new Object(),
-        action_btn_dict: new Object()
+        action_btn_dict: new Object(),
+        dropdownlabel: "Sort by Action",
     },
+
     created () {
         this.api_call('http://localhost:8000/api/event/?format=json','GET')
         .then(response => {
             this.init_events(response.data)
         })
         Object.assign(this.action_btn_dict,{'accept':{value: "Zugesagt", class: "success", icon: "done"} })
-        Object.assign(this.action_btn_dict,{'maybe':{value: "Mit Vorbehalt zugesagt", class: "warning", icon: "access_time"} })
+        Object.assign(this.action_btn_dict,{'maybe':{value: "Mit Vorbehalt", class: "warning", icon: "access_time"} })
         Object.assign(this.action_btn_dict,{'reject':{value: "Abgesagt", class: "danger", icon: "clear"} })
 
     },
@@ -73,11 +75,15 @@ var vueapp = new Vue({
 
         },
         sort_members: function(event,action){
+            
             this.tab_action_setactive(event,action)
             var sorted_members = []
-            if (action == 'all')
+            if (action == 'all'){
                 sorted_members = event.members
-            else{
+                this.dropdownlabel = 'All'
+            }else{
+                //set dropdown label to action_btn_dict[action].value
+                this.dropdownlabel = this.action_btn_dict[action].value
                 event.members.forEach(mem => {
                     if (mem.action == action)
                         sorted_members.push(mem)
@@ -102,7 +108,7 @@ var vueapp = new Vue({
             return return_val
         },
         // workaround for disable tab-action active
-        tab_action_setactive(event,action){
+        tab_action_setactive: function(event,action){
             // disable all
             var actions = ['all','accept','reject','maybe']
             actions.forEach(ac => {

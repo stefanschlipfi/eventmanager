@@ -13,7 +13,13 @@
 .active{
     color:var(--mdc-theme-primary,blue) !important;
 }
-
+.nav-action-dropdown{
+    display: flex;
+    flex-grow: 1;
+}
+.nav-action-dropdown button{
+    border: 2px solid;
+}
 .action-btn{
     min-width: 20%;
     margin-right: 10px;
