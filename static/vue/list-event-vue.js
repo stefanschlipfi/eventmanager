@@ -125,13 +125,17 @@ var vueapp = new Vue({
                 this.err_messages.push("cannot find active detail event");
             }else{
                 this.err_messages = []
+                //get action seclect
                 var action_select = $('#id_action')[0]
                 var action = action_select.options[action_select.selectedIndex].value
+                //get action comment
+                var action_commet = $('#id_comment')[0].value
+                
                 var eventuser = this.find_eventuser(event,user_id)
                 if (eventuser)  
-                    resp = this.update_eventuser(eventuser,action)
+                    resp = this.update_eventuser(eventuser,action,action_commet)
                 else
-                    resp = this.create_eventuser(event,user_id,action)
+                    resp = this.create_eventuser(event,user_id,action,action_commet)
 
                 resp.then(r => {
                     var event = this.init_event(r.data['event'])
@@ -142,15 +146,17 @@ var vueapp = new Vue({
                 });
             }
         },
-        update_eventuser: function(eventuser,action){
+        update_eventuser: function(eventuser,action,action_commet){
             data = new Object
             data['action'] = action
+            data['comment'] = action_commet
             event = eventuser.event
             return this.api_call(''.concat("http://localhost:8000/api/eventuser/",eventuser.id,"/?format=json"),"PUT",json_data=data)            
         },
-        create_eventuser: function(event,user_id,action){
+        create_eventuser: function(event,user_id,action,action_commet){
             data = new Object
             data['action'] = action
+            data['comment'] = action_commet
             data['event_id'] = event.id
             data['user_id'] = user_id
             return this.api_call("http://localhost:8000/api/eventuser/?format=json","POST",json_data=data)
